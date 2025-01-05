@@ -25,6 +25,7 @@ def simulation_sys(capacite, seuil_chute, chute, Ptrain, Etrain, temps,Vsst,Req)
     # Initialisation des paramètres
     capa = capacite  # Capacité maximale de la batterie (en énergie)
     seuil = seuil_chute  # Seuil de chute de tension admissible
+    rend_batt = 0.9
 
     # Variables initiales
     Ebatt = 0  # Énergie actuelle dans la batterie
@@ -44,7 +45,7 @@ def simulation_sys(capacite, seuil_chute, chute, Ptrain, Etrain, temps,Vsst,Req)
                 flag1 = False
             if Ebatt < capa :  #si la batterie n'est pas complètement chargée 
                 Pbatt[t] = Ptrain[t]  #Gestion de la batterie 
-                Ebatt -= (Etrain[t+1] - Etrain[t0])  #mettre à jour l'energie de la batterie 
+                Ebatt -= (Etrain[t+1] - Etrain[t0])*rend_batt  #mettre à jour l'energie de la batterie avec un rendement 
                 
             elif Ebatt == capa :  #La batterie est complètement chargée 
                 Prhe[t] = Ptrain[t] 
@@ -61,7 +62,7 @@ def simulation_sys(capacite, seuil_chute, chute, Ptrain, Etrain, temps,Vsst,Req)
                     t1 = t
                     flag2 = False
                 Pbatt[t] = Ptrain[t] #Gestion de la batterie 
-                Ebatt -= (Etrain[t+1] - Etrain[t1]) #mettre à jour l'energie de la batterie 
+                Ebatt -= (Etrain[t+1] - Etrain[t1])*rend_batt #mettre à jour l'energie de la batterie avec rendementt 
 
             flag2 = True
 
