@@ -50,7 +50,7 @@ def simulation_sys(capacite, seuil_chute, chute, Ptrain, Etrain, temps,Vsst,Req)
                 Prhe[t] = Ptrain[t] 
 
             else :   #Remettre la bonne valeur de l'énergie 
-                print("Erreur énergie a depassé la capacit  dans la batterie")
+                print("L'énnergie de la batterie a depassé la capacité, remise à niveau")
                 Ebatt = capa
 
         flag1 =True # on met le flag à True afin de détecter le prochaain début d'un cycle de freinage 
