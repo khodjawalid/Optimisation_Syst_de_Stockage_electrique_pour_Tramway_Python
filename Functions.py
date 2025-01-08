@@ -57,15 +57,22 @@ def simulation_sys(capacite, seuil_puissance , Ptrain, Etrain, temps, Vsst, Req)
 
         if Ptrain[t] > 0 : #Durant l'accélération 
             if Ptrain[t] > seuil and Ebatt > 0 :
-                if flag2 : #fixer le point du debut d'utilisation de la batterie afin de soustraire l'energie 
-                    t1 = t
-                    flag2 = False
-                Pbatt[t] = Ptrain[t]  #Gestion de la batterie 
-                Ebatt -= (Etrain[t+1] - Etrain[t1])*rend_batt #mettre à jour l'energie de la batterie avec rendementt 
+                if Ebatt > 0 :
+                    if flag2 : #fixer le point du debut d'utilisation de la batterie afin de soustraire l'energie 
+                        t1 = t
+                        flag2 = False
+                    Pbatt[t] = Ptrain[t] - seuil  #Gestion de la batterie 
+                    Plac[t] = seuil
+                    
+                    E_nec = (Etrain[t+1] - Etrain[t1])*(Pbatt[t]/Ptrain[t]) #Energie nécéssaire
+                    E_dep = E_nec*rend_batt  #Energie dépensée par la batterie pour fournir de l'énergie 
+                    Ebatt -= E_dep  #mettre à jour l'energie de la batterie avec un rendement 
+                else :
+                    Plac[t] = Ptrain[t] #On utilise la sst 
 
             flag2 = True
 
-            if Ptrain[t] <= seuil or Ebatt <= 0 : #Si on respecte le seuil ou bien la batterie est déchargée 
+            if Ptrain[t] <= seuil : #Si on respecte le seuil ou bien la batterie est déchargée 
                 Plac[t] = Ptrain[t] #On utilise la sst 
 
     
