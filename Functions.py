@@ -32,19 +32,13 @@ def simulation_sys(capacite, seuil_puissance , Ptrain, Etrain, temps, Vsst, Req)
     Prhe = np.zeros(len(Etrain))  # Puissance dissipée par le rhéostat
     Plac = np.zeros(len(Etrain))  # Puissance fournie par la ligne aérienne de contact (LAC)
 
-    # Flags pour détecter les cycles de freinage et d'accélération
-    flag1 = True  # Utilisé pour détecter le début d'un cycle de freinage
-    flag2 = True  # Utilisé pour détecter le début d'un cycle d'accélération
-
     # Simulation sur la durée du trajet
     for t in temps[:-2] :
         if Ptrain[t] <= 0 : #durant le freinage
-            if flag1 :   #fixer le point du debut de freinage afin de soustraire l'énergie commulée avant 
-                t0 = t 
-                flag1 = False
+
             if Ebatt < capa :  #si la batterie n'est pas complètement chargée 
                 Pbatt[t] = Ptrain[t]  #Gestion de la batterie 
-                Ebatt -= (Etrain[t+1] - Etrain[t0])*rend_batt  #mettre à jour l'energie de la batterie avec un rendement 
+                Ebatt -= (Etrain[t+1] - Etrain[t])*rend_batt  #mettre à jour l'energie de la batterie avec un rendement 
                 
             elif Ebatt == capa :  #La batterie est complètement chargée 
                 Prhe[t] = Ptrain[t] 
@@ -52,25 +46,21 @@ def simulation_sys(capacite, seuil_puissance , Ptrain, Etrain, temps, Vsst, Req)
             else :   #Remettre la bonne valeur de l'énergie 
                 #print("L'énnergie de la batterie a depassé la capacité, remise à niveau")
                 Ebatt = capa
+                Prhe[t] = Ptrain[t] 
 
-        flag1 =True # on met le flag à True afin de détecter le prochaain début d'un cycle de freinage 
 
         if Ptrain[t] > 0 : #Durant l'accélération 
-            if Ptrain[t] > seuil and Ebatt > 0 :
+            if Ptrain[t] > seuil:
                 if Ebatt > 0 :
-                    if flag2 : #fixer le point du debut d'utilisation de la batterie afin de soustraire l'energie 
-                        t1 = t
-                        flag2 = False
+                
                     Pbatt[t] = Ptrain[t] - seuil  #Gestion de la batterie 
                     Plac[t] = seuil
                     
-                    E_nec = (Etrain[t+1] - Etrain[t1])*(Pbatt[t]/Ptrain[t]) #Energie nécéssaire
+                    E_nec = (Etrain[t+1] - Etrain[t])*(Pbatt[t]/Ptrain[t]) #Energie nécéssaire
                     E_dep = E_nec*rend_batt  #Energie dépensée par la batterie pour fournir de l'énergie 
                     Ebatt -= E_dep  #mettre à jour l'energie de la batterie avec un rendement 
                 else :
                     Plac[t] = Ptrain[t] #On utilise la sst 
-
-            flag2 = True
 
             if Ptrain[t] <= seuil : #Si on respecte le seuil ou bien la batterie est déchargée 
                 Plac[t] = Ptrain[t] #On utilise la sst 
