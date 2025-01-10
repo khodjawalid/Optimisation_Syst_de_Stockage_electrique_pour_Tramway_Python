@@ -2,7 +2,12 @@ import numpy as np
 import random
 from matplotlib import pyplot as plt 
 
-
+"""
+Groupe :
+    - Walid Abdelaziz KHODJA (21214724)
+    - Manel MOULAHCENE (21122033)
+    -  Hadriel RATIARISON (21109195)
+"""
 ########################### Parti construction système ###############################
 ######################################################################################
 
