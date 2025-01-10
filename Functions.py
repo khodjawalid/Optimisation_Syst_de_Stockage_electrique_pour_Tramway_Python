@@ -335,7 +335,7 @@ def affichage_Monte_Carlo(batt_capa, rangs, p_seuil, optimal, chute_sys):
 
     plt.scatter(batt_capa[optimal]*1e-3/3600,chute_sys[optimal],color='yellow',label='Solution optimale')
     plt.ylabel("Chute maximale de tension (V)")
-    plt.xlabel("Capacité de la batterie (kWs)")
+    plt.xlabel("Capacité de la batterie (kWh)")
     plt.grid()
     plt.legend(loc='right')
 
